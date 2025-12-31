@@ -1,6 +1,6 @@
 # RAVEN (Rockchip Accelerated Vision Edge Node)
 
-**High-Performance Edge Perception System based on RK3588 & Qwen2-VL**
+**High-Performance Edge Perception System based on RK3588 & Qwen3-VL**
 
 ![Platform](https://img.shields.io/badge/Platform-Rockchip%20RK3588-blue) ![OS](https://img.shields.io/badge/OS-Linux%20Embeddded-green) ![Framework](https://img.shields.io/badge/Framework-RKNN%20%7C%20MPP%20%7C%20RGA-orange)
 
@@ -21,8 +21,8 @@ The project aims to solve the bottleneck of CPU memory copying in traditional ed
 - **RGA (Raster Graphic Acceleration)**: Hardware-accelerated color space conversion (NV12 -> RGB) and resizing.
 - **DRM Zero-Copy**: Implemented physical address mapping to share memory between decoder (VPU) and inference engine (NPU), eliminating CPU `memcpy` overhead.
 
-### 3. Edge VLM Deployment (Qwen2-VL)
-- **Model**: Qwen2-VL-2B-Instruct.
+### 3. Edge VLM Deployment (Qwen3-VL)
+- **Model**: **Qwen3-VL-2B-Instruct** (Latest Edge-optimized VLM).
 - **Quantization**: W4A16 (4-bit weights, 16-bit activation) hybrid quantization using RKNN-Toolkit2.
 - **Performance**: Achieves **~12 tokens/s** inference speed on RK3588 NPU (3-core utilization).
 
@@ -48,15 +48,15 @@ graph LR
 | :--- | :--- | :--- | :--- | :--- |
 | **Pre-process** | 1080p Decode + Resize | OpenCV (CPU) | ~15ms | 35% (Single Core) |
 | **Pre-process** | 1080p Decode + Resize | **RAVEN (MPP+RGA)** | **< 2ms** | **< 5%** |
-| **Inference** | Qwen2-VL-2B | FP16 | OOM / Slow | - |
-| **Inference** | Qwen2-VL-2B | **W4A16 (RKNN)** | **12 tokens/s** | NPU High / CPU Low |
+| **Inference** | Qwen3-VL-2B | FP16 | OOM / Slow | - |
+| **Inference** | Qwen3-VL-2B | **W4A16 (RKNN)** | **12 tokens/s** | NPU High / CPU Low |
 
 ## 🛠️ Build & Usage
 
 ### Prerequisites
 *   Hardware: RK3588 / RK3588S EVB or Custom Board.
-*   Host: Ubuntu 20.04/22.04 (Cross-compilation environment).
-*   SDK: Rockchip Linux SDK 5.10+.
+*   Host: Ubuntu 22.04/24.04 (Cross-compilation environment).
+*   SDK: Rockchip Linux SDK 6.0+ (Support for newer Transformer ops).
 
 ### 1. Build BSP (Optional)
 If you need to build the OS image from scratch:
@@ -75,10 +75,10 @@ make -j8
 ```
 
 ### 3. Run Demo
-Transfer the executable and model (`qwen2vl_w4a16.rknn`) to the board:
+Transfer the executable and model (`qwen3vl_w4a16.rknn`) to the board:
 ```bash
 # On RK3588 device
-sudo ./raven_vlm_demo --model ./models/qwen2vl_w4a16.rknn --input video_sample.mp4
+sudo ./raven_vlm_demo --model ./models/qwen3vl_w4a16.rknn --input video_sample.mp4
 ```
 
 ## 📂 Project Structure
@@ -90,7 +90,7 @@ RAVEN
 │   ├── hardware/       # MPP and RGA wrapper classes
 │   ├── model/          # RKNN inference engine interface
 │   └── utils/          # DRM memory management utils
-├── models/             # Quantization scripts and configs for Qwen2-VL
+├── models/             # Quantization scripts and configs for Qwen3-VL
 ├── docs/               # Architecture diagrams and performance reports
 └── README.md
 ```
