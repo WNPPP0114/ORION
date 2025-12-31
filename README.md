@@ -22,7 +22,7 @@ The project aims to solve the bottleneck of CPU memory copying in traditional ed
 - **DRM Zero-Copy**: Implemented physical address mapping to share memory between decoder (VPU) and inference engine (NPU), eliminating CPU `memcpy` overhead.
 
 ### 3. Edge VLM Deployment (Qwen3-VL)
-- **Model**: Qwen3-VL-4B-Instruct.
+- **Model**: Qwen3-VL-2B-Instruct.
 - **Quantization**: W4A16 (4-bit weights, 16-bit activation) hybrid quantization using RKNN-Toolkit2.
 - **Performance**: Achieves **~12 tokens/s** inference speed on RK3588 NPU (3-core utilization).
 
