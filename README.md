@@ -30,17 +30,16 @@ The project aims to solve the bottleneck of CPU memory copying in traditional ed
 
 ```mermaid
 graph LR
-    Cam[Camera/RTSP] -->|Encoded Stream| VPU[MPP Decoder]
-    VPU -->|DMA-BUF (NV12)| RGA[RGA Hardware]
-    RGA -->|DMA-BUF (RGB)| NPU[RKNN NPU]
+    Cam[Camera/RTSP] -->|"Encoded Stream"| VPU[MPP Decoder]
+    VPU -->|"DMA-BUF (NV12)"| RGA[RGA Hardware]
+    RGA -->|"DMA-BUF (RGB)"| NPU[RKNN NPU]
     
     subgraph "Zero-Copy Pipeline (DRM)"
     VPU -.-> RGA -.-> NPU
     end
     
-    NPU -->|Tensor| CPU[Post-Process]
-    CPU -->|Result| App[VLM Agent]
-```
+    NPU -->|"Tensor"| CPU[Post-Process]
+    CPU -->|"Result"| App[VLM Agent]
 
 ## 📊 Performance Benchmarks
 
