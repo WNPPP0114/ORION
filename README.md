@@ -1,8 +1,8 @@
 # RAVEN (Rockchip Accelerated Vision Edge Node)
 
-**High-Performance Edge Perception System based on RK3588 & Qwen3-VL**
+**High-Performance Edge Perception System based on RK3588 & Qwen2-VL**
 
-![Platform](https://img.shields.io/badge/Platform-Rockchip%20RK3588-blue) ![OS](https://img.shields.io/badge/OS-Linux%20Embeddded-green) ![Framework](https://img.shields.io/badge/Framework-RKNN%20%7C%20MPP%20%7C%20RGA-orange) 
+![Platform](https://img.shields.io/badge/Platform-Rockchip%20RK3588-blue) ![OS](https://img.shields.io/badge/OS-Linux%20Embeddded-green) ![Framework](https://img.shields.io/badge/Framework-RKNN%20%7C%20MPP%20%7C%20RGA-orange)
 
 ## 📖 Introduction
 **RAVEN** is a full-stack embedded AI solution designed for the Rockchip RK3588 platform. It integrates a custom-built Linux BSP, a zero-copy hardware acceleration pipeline, and state-of-the-art Visual Language Model (VLM) deployment. 
@@ -21,8 +21,8 @@ The project aims to solve the bottleneck of CPU memory copying in traditional ed
 - **RGA (Raster Graphic Acceleration)**: Hardware-accelerated color space conversion (NV12 -> RGB) and resizing.
 - **DRM Zero-Copy**: Implemented physical address mapping to share memory between decoder (VPU) and inference engine (NPU), eliminating CPU `memcpy` overhead.
 
-### 3. Edge VLM Deployment (Qwen3-VL)
-- **Model**: Qwen3-VL-2B-Instruct.
+### 3. Edge VLM Deployment (Qwen2-VL)
+- **Model**: Qwen2-VL-2B-Instruct.
 - **Quantization**: W4A16 (4-bit weights, 16-bit activation) hybrid quantization using RKNN-Toolkit2.
 - **Performance**: Achieves **~12 tokens/s** inference speed on RK3588 NPU (3-core utilization).
 
@@ -40,6 +40,7 @@ graph LR
     
     NPU -->|"Tensor"| CPU[Post-Process]
     CPU -->|"Result"| App[VLM Agent]
+```
 
 ## 📊 Performance Benchmarks
 
