@@ -42,14 +42,14 @@ graph LR
         Stage3["Stage 3: Post-process<br/>(CPU Multi-thread)"]
     end
 
-    Cam["Camera Stream"] --> Stage1
+    Cam[Camera Stream] --> Stage1
     Stage1 -->|"Ring Buffer (DMA-BUF)"| Stage2
     Stage2 -->|"Async Callback"| Stage3
-    Stage3 -->|"Result"| App["VLM Agent"]
+    Stage3 -->|"Result"| App[VLM Agent]
 
-    style Stage1 fill:#e1f5fe,stroke:#01579b
-    style Stage2 fill:#fff3e0,stroke:#ff6f00
-    style Stage3 fill:#e8f5e9,stroke:#1b5e20
+    style Stage1 fill:#D1E8FF,stroke:#0050B3,stroke-width:2px,color:#003A8C
+    style Stage2 fill:#FFD8BF,stroke:#D4380D,stroke-width:2px,color:#871400
+    style Stage3 fill:#D9F7BE,stroke:#237804,stroke-width:2px,color:#135200
 ```
 
 ## 📊 Performance Benchmarks
