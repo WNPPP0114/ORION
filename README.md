@@ -37,15 +37,15 @@ The project aims to solve the bottleneck of CPU memory copying and sequential ex
 graph LR
     subgraph "Parallel Execution Pipeline"
         direction TB
-        Stage1[Stage 1: Decode & Pre-process<br/>(MPP + RGA)] 
-        Stage2[Stage 2: Inference Pool<br/>(NPU Core 0/1/2)]
-        Stage3[Stage 3: Post-process<br/>(CPU Multi-thread)]
+        Stage1["Stage 1: Decode & Pre-process<br/>(MPP + RGA)"] 
+        Stage2["Stage 2: Inference Pool<br/>(NPU Core 0/1/2)"]
+        Stage3["Stage 3: Post-process<br/>(CPU Multi-thread)"]
     end
 
-    Cam[Camera Stream] --> Stage1
+    Cam["Camera Stream"] --> Stage1
     Stage1 -->|"Ring Buffer (DMA-BUF)"| Stage2
     Stage2 -->|"Async Callback"| Stage3
-    Stage3 -->|"Result"| App[VLM Agent]
+    Stage3 -->|"Result"| App["VLM Agent"]
 
     style Stage1 fill:#e1f5fe,stroke:#01579b
     style Stage2 fill:#fff3e0,stroke:#ff6f00
