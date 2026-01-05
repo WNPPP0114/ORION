@@ -40,34 +40,36 @@ By integrating **DMA-BUF (DRM) Zero-Copy** memory sharing, **CPU/NPU asynchronou
 ## 🏗 Architecture
 
 ```mermaid
-graph LR
+graph TD
     subgraph "Dual-Path Processing Architecture"
         direction TB
         
+        Cam[Camera Streams] -->|"Raw Video Frames"| V1
+        
         subgraph "Real-time Vision Path"
-            direction LR
-            V1["MPP Decoder<br/>8-ch 1080p@30fps"] 
-            V2["RGA Preprocessor<br/>NV12→RGB"]
-            V3["YOLOv11 NPU Inference<br/>60+ FPS"]
-            V4["JSON Generator<br/>Object Detection"]
+            V1["Stage 1: MPP Decoder<br/>8-ch 1080p@30fps"] 
+            V2["Stage 2: RGA Preprocessor<br/>NV12→RGB Conversion"]
+            V3["Stage 3: YOLOv11 NPU Inference<br/>60+ FPS Object Detection"]
+            V4["Stage 4: JSON Generator<br/>Structured Detection Results"]
             
-            V1 --> V2 --> V3 --> V4
+            V1 --> V2
+            V2 --> V3
+            V3 --> V4
         end
+        
+        V4 -.->|"Structured JSON Data<br/>Every 3 seconds"| R1
         
         subgraph "Semantic Reasoning Path"
-            direction LR
-            R1["Memory Pool<br/>DRAM/NPU Shared"] 
-            R2["DeepSeek R1 1.5B<br/>W4A16 Quantized"]
-            R3["Decision Engine<br/>Context Reasoning"]
+            R1["Stage 1: Memory Pool<br/>DRAM/NPU Shared Buffer"]
+            R2["Stage 2: DeepSeek R1 1.5B<br/>W4A16 Quantized LLM"]
+            R3["Stage 3: Decision Engine<br/>Context-Aware Reasoning"]
             
-            R1 --> R2 --> R3
+            R1 --> R2
+            R2 --> R3
         end
         
-        V4 -.->|"Structured JSON<br/>Every 3s"| R1
+        R3 -->|"Action Commands<br/>Safety Alerts"| App[Application Layer]
     end
-
-    Cam[Camera Streams] --> V1
-    R3 -->|"Action Commands<br/>Safety Alerts"| App[Application Layer]
 
     %% Vision Path Styling (Blue Theme)
     style V1 fill:#D1E8FF,stroke:#0050B3,stroke-width:2px,color:#003A8C
