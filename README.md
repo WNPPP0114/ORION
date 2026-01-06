@@ -158,15 +158,40 @@ sudo orion_core \
 ## 📂 Project Structure
 ```text
 ORION/
-├── bsp/                    # Board Support Package (Kernel/U-Boot/DTS)
-├── src/
-│   ├── core/               # Scheduler & Thread Pool Manager
-│   ├── vision/             # MPP Decoder, RGA Processing, YOLO Post-process
-│   ├── reasoning/          # RKLLM Inference Engine & Context Manager
-│   └── hal/                # DRM/DMA-BUF Hardware Abstraction Layer
-├── models/                 # Model Conversion Scripts (ONNX -> RKNN)
-├── tools/                  # Performance Profiling & Debug Tools
-└── docs/                   # Architecture & API References
+├── 📂 bsp/                      # Board Support Package (System Level)
+│   ├── kernel/                  # Linux 5.10 custom configs & PREEMPT_RT patches
+│   ├── dts/                     # Device Tree Overlays (NPU/Camera/RGA enablement)
+│   └── rootfs/                  # Minimal rootfs configurations
+│
+├── 📂 src/                      # Application Source Code
+│   ├── 🔹 main.cpp              # Entry point & Argument parsing
+│   ├── 📂 core/                 # System Orchestration
+│   │   ├── scheduler.cpp        # Async pipeline coordinator (Vision vs Logic)
+│   │   └── thread_pool.cpp      # NPU Core affinity manager (0-1:Vision, 2:LLM)
+│   │
+│   ├── 📂 modules/              # Business Logic Units
+│   │   ├── vision/              # YOLO post-processing & JSON serialization
+│   │   └── reasoning/           # DeepSeek context manager & decision logic
+│   │
+│   └── 📂 hal/                  # Hardware Abstraction Layer (The "Secret Sauce")
+│       ├── mpp_decoder/         # Video decoding wrapper (H.264/H.265)
+│       ├── rga_transform/       # Zero-copy resizing & color conversion
+│       └── drm_allocator/       # DMA-BUF memory management & export
+│
+├── 📂 third_party/              # External SDK Dependencies
+│   ├── rknn_api/                # Neural Network runtime headers
+│   └── rockchip_mpp/            # Media Process Platform headers
+│
+├── 📂 models/                   # Model Zoo & Conversion Scripts
+│   ├── export/                  # ONNX to RKNN conversion configs
+│   └── zoo/                     # Quantized binaries (.rknn)
+│
+├── 📂 docker/                   # Cross-compilation Environment
+│   └── Dockerfile               # Ubuntu 22.04 + GCC-aarch64 + CMake
+│
+└── 📂 scripts/                  # DevOps & Tools
+    ├── deploy.sh                # One-click deployment script (Host -> Device)
+    └── monitor.py               # NPU/CPU/RAM real-time dashboard
 ```
 
 ## 🤝 Contribution
