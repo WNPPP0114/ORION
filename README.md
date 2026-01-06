@@ -75,6 +75,7 @@ graph TD
         end
         
         subgraph "HMI Visualization Layer<br/> (Qt6/EGL)"
+
             UI1["GPU Texture Mapping<br/>(EGLImage)"]
             UI2["Thought Chain Display<br/>(QML Typewriter)"]
         end
