@@ -1,17 +1,18 @@
+```markdown
 # ORION (Optimized Reasoning & Intelligence On Node)
 
 **Next-Gen Heterogeneous Edge AI System: Integrating Real-time Vision & LLM Reasoning on RK3588**
 
 [![Platform](https://img.shields.io/badge/Platform-Rockchip%20RK3588-blue?logo=linux&logoColor=white)](https://www.rock-chips.com/)
 [![OS](https://img.shields.io/badge/OS-Embedded%20Linux%20(5.10%20LTS)-green?logo=tux&logoColor=white)](https://kernel.org)
-[![Framework](https://img.shields.io/badge/Framework-RKNN%20%7C%20MPP%20%7C%20RGA-orange)](https://github.com/airockchip/rknn-toolkit2)
+[![Framework](https://img.shields.io/badge/Framework-RKNN%20%7C%20MPP%20%7C%20RGA%20%7C%20Qt6-orange)](https://github.com/airockchip/rknn-toolkit2)
 [![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey)](LICENSE)
 
 ## 📖 Introduction
 
 **ORION** is a high-performance, heterogeneous edge AI framework engineered specifically for the Rockchip RK3588 platform. It transcends traditional "vision-only" edge systems by fusing **Real-time Object Detection (YOLO)** with **Semantic Reasoning (DeepSeek LLM)** into a unified, zero-copy pipeline.
 
-Current edge AI solutions often suffer from memory bottlenecks and serialized processing. ORION solves this by implementing a **DMA-BUF (DRM) Zero-Copy architecture**, allowing the CPU, NPU, and RGA to share memory without redundant copying. The result is a system capable of **60+ FPS visual perception** and **14 tokens/s complex logic reasoning** simultaneously, enabling true "Embedded AGI" capabilities on <10W power consumption.
+Current edge AI solutions often suffer from memory bottlenecks and serialized processing. ORION solves this by implementing a **DMA-BUF (DRM) Zero-Copy architecture**, allowing the CPU, NPU, RGA, and GPU (for UI) to share memory without redundant copying. The result is a system capable of **60+ FPS visual perception**, **14 tokens/s complex logic reasoning**, and **4K 60FPS UI rendering** simultaneously.
 
 ## 🚀 Key Features
 
@@ -36,10 +37,14 @@ Current edge AI solutions often suffer from memory bottlenecks and serialized pr
     *   Acts as the system's "Prefrontal Cortex," analyzing vision-generated JSON to make context-aware decisions.
     *   Achieves **14 tokens/s** generation speed through asynchronous pipeline optimizations.
 
-### 4. Advanced Resource Management
+### 4. Real-time HMI Dashboard (Qt6/QML)
+*   **Zero-Copy Rendering**: Utilizes `EGL_LINUX_DMA_BUF_EXT` to map video buffers directly to GPU textures, bypassing CPU memory copy.
+*   **Interactive "Thought Chain"**: Visualizes the LLM's reasoning process with a typewriter effect alongside the video stream.
+*   **Performance Monitor**: Real-time plotting of NPU usage, temperature, and DDR bandwidth using custom QChart widgets.
+
+### 5. Advanced Resource Management
 *   **Asynchronous Execution Engine**: Completely decouples the high-frequency vision loop from the lower-frequency reasoning loop.
 *   **3-Core NPU Saturation**: Custom thread pool manager dynamically assigns NPU Core 0/1 to Vision and Core 2 to LLM, achieving **98% NPU utilization**.
-*   **Adaptive Memory Governor**: Dynamic context pruning for the LLM and aggressive buffer recycling for vision streams to fit within 8GB/16GB RAM constraints.
 
 ## 🏗 Architecture
 
@@ -62,6 +67,7 @@ graph TD
         end
         
         V4 -.->|"Snapshot & JSON Data<br/>(Async Trigger)"| R1
+        V2 -.->|"DMA-BUF Handle<br/>(EGL Mapping)"| GUI
         
         subgraph "Slow Loop: Cognitive Reasoning (14 tokens/s)"
             R1["Stage 1: Context Window<br/>Shared DRAM Buffer"]
@@ -72,8 +78,12 @@ graph TD
             R2 --> R3
         end
         
+        subgraph "HMI Layer: Qt6 + OpenGL"
+            GUI["GPU Texture Rendering<br/>Real-time Overlay"]
+        end
+        
         R3 -->|"High-Level Commands"| App[Application Layer]
-        V4 -->|"Real-time Overlay"| App
+        R3 -->|"Reasoning Text Stream"| GUI
     end
 
     %% --- Styling Definition ---
@@ -91,10 +101,22 @@ graph TD
     style V3 fill:#FFD8BF,stroke:#D4380D,stroke-width:3px,color:#871400
     style R2 fill:#FFD8BF,stroke:#D4380D,stroke-width:3px,color:#871400
     
+    %% HMI Layer (Purple Theme)
+    style GUI fill:#E6E6FA,stroke:#6A0DAD,stroke-width:2px,color:#4B0082
+    
     %% External Nodes (Grey)
     style Cam fill:#F5F5F5,stroke:#595959,stroke-width:2px,color:#262626
     style App fill:#F5F5F5,stroke:#595959,stroke-width:2px,color:#262626
 ```
+
+## 🖥️ HMI & Visualization
+
+ORION includes a reference HMI built with **Qt 6.7 (QML)**. It demonstrates the system's capabilities by rendering NPU output without compromising the pipeline's performance.
+
+| **Real-time Perception** | **Cognitive Reasoning** |
+| :---: | :---: |
+| ![Vision-Demo](https://via.placeholder.com/400x200.png?text=60FPS+Direct+GLES+Render) | ![LLM-Demo](https://via.placeholder.com/400x200.png?text=DeepSeek+Reasoning+Log) |
+| **Direct GPU Rendering (EGL)** | **Async Text Stream** |
 
 ## 📊 Performance Benchmarks
 
@@ -111,12 +133,12 @@ graph TD
 
 ### Prerequisites
 *   **Hardware**: Rockchip RK3588/RK3588S (8GB+ RAM required for LLM)
-*   **Host**: Ubuntu 22.04 LTS (Docker required for cross-compilation)
+*   **Host**: Ubuntu 22.04 LTS (Docker required)
 *   **SDK**: Rockchip Linux SDK 5.10 + RKNN Toolkit2 v2.0+
 
 ### 1. System Setup
 ```bash
-# Clone repository with submodules
+# Clone repository
 git clone --recursive https://github.com/WNPPP0114/ORION.git
 cd ORION
 
@@ -127,7 +149,6 @@ docker run -v $(pwd):/workspace -it orion-builder
 
 ### 2. Build BSP & Firmware
 ```bash
-# Build custom U-Boot, Kernel, and RootFS
 cd bsp
 ./configure --platform=rk3588 --board=itop-3588
 ./build.sh full_image
@@ -137,25 +158,25 @@ cd bsp
 ```bash
 cd src
 mkdir build && cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain/rk3588_linux.cmake -DCMAKE_BUILD_TYPE=Release ..
+# Enable GUI for Qt/EGL support
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain/rk3588_linux.cmake \
+      -DENABLE_GUI=ON \
+      -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
 ```
 
-### 4. Deploy Models & Run
+### 4. Deploy & Run
 ```bash
-# Transfer artifacts to board
-scp ./orion_core user@rk3588:/usr/local/bin/
-scp -r ../models user@rk3588:/opt/orion/
-
 # Run the ORION Daemon on device
 sudo orion_core \
   --vision_model /opt/orion/models/yolov11s.rknn \
   --llm_model /opt/orion/models/deepseek-r1-1.5b_w4a16.rknn \
   --enable_zero_copy true \
-  --npu_split_mode 2:1  # 2 cores for Vision, 1 core for LLM
+  --gui_enabled true
 ```
 
 ## 📂 Project Structure
+
 ```text
 ORION/
 ├── 📂 bsp/                      # Board Support Package (System Level)
@@ -167,35 +188,32 @@ ORION/
 │   ├── 🔹 main.cpp              # Entry point & Argument parsing
 │   ├── 📂 core/                 # System Orchestration
 │   │   ├── scheduler.cpp        # Async pipeline coordinator (Vision vs Logic)
-│   │   └── thread_pool.cpp      # NPU Core affinity manager (0-1:Vision, 2:LLM)
+│   │   └── thread_pool.cpp      # NPU Core affinity manager
 │   │
 │   ├── 📂 modules/              # Business Logic Units
 │   │   ├── vision/              # YOLO post-processing & JSON serialization
 │   │   └── reasoning/           # DeepSeek context manager & decision logic
 │   │
-│   └── 📂 hal/                  # Hardware Abstraction Layer (The "Secret Sauce")
-│       ├── mpp_decoder/         # Video decoding wrapper (H.264/H.265)
-│       ├── rga_transform/       # Zero-copy resizing & color conversion
-│       └── drm_allocator/       # DMA-BUF memory management & export
+│   ├── 📂 hal/                  # Hardware Abstraction Layer (The "Secret Sauce")
+│   │   ├── mpp_decoder/         # Video decoding wrapper (H.264/H.265)
+│   │   ├── rga_transform/       # Zero-copy resizing & color conversion
+│   │   └── drm_allocator/       # DMA-BUF memory management & export
+│   │
+│   └── 📂 ui/                   # Qt6 HMI Subsystem
+│       ├── 📂 qml/              # Modern Dashboard (QML)
+│       └── 📂 render/           # EGL/GLES Texture Mapper
 │
 ├── 📂 third_party/              # External SDK Dependencies
 │   ├── rknn_api/                # Neural Network runtime headers
 │   └── rockchip_mpp/            # Media Process Platform headers
 │
 ├── 📂 models/                   # Model Zoo & Conversion Scripts
-│   ├── export/                  # ONNX to RKNN conversion configs
-│   └── zoo/                     # Quantized binaries (.rknn)
-│
 ├── 📂 docker/                   # Cross-compilation Environment
-│   └── Dockerfile               # Ubuntu 22.04 + GCC-aarch64 + CMake
-│
-└── 📂 scripts/                  # DevOps & Tools
-    ├── deploy.sh                # One-click deployment script (Host -> Device)
-    └── monitor.py               # NPU/CPU/RAM real-time dashboard
+└── 📂 scripts/                  # DevOps & Deployment Tools
 ```
 
 ## 🤝 Contribution
-Contributions are welcome! Please see our [Contribution Guidelines](CONTRIBUTING.md). We are particularly interested in:
+Contributions are welcome! We are particularly interested in:
 - Extending support to RK3568 / RK3576 platforms.
 - Implementing support for Multi-modal LLMs (LlaVA).
 - Optimizing RGA memory alignment strategies.
@@ -203,9 +221,11 @@ Contributions are welcome! Please see our [Contribution Guidelines](CONTRIBUTING
 ## ✨ Acknowledgements
 - **Rockchip**: For the RKNN and MPP frameworks.
 - **DeepSeek**: For the open-weights reasoning models.
+- **Qt Group**: For the rendering engine.
 - **Linux Kernel Community**: For the PREEMPT_RT patchset.
 
 ---
-**Project Duration**: June 2025 - June 2026
-**Hardware Platform**: Rockchip RK3588 (8GB RAM)
+**Maintainer**: WNPPP0114  
+**Hardware Platform**: Rockchip RK3588 (8GB RAM)  
 **GitHub**: https://github.com/WNPPP0114/ORION
+```
