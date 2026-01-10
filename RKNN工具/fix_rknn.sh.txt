@@ -2,8 +2,8 @@
 
 
 # 定义路径
-LIB_PATH="/home/wzp/03_RK3568/rknpu2-master/runtime/RK356X/Linux/librknn_api/aarch64/librknnrt.so"
-SERVER_PATH="/home/wzp/03_RK3568/rknpu2-master/runtime/RK356X/Linux/rknn_server/aarch64/usr/bin/rknn_server"
+LIB_PATH="/home/wzp/RKNN/rknn-toolkit2-master/rknpu2/runtime/Linux/librknn_api/aarch64/librknnrt.so"
+SERVER_PATH="/home/wzp/RKNN/rknn-toolkit2-master/rknpu2/runtime/Linux/rknn_server/aarch64/usr/bin/rknn_server"
 
 echo "正在等待设备连接..."
 adb wait-for-device
@@ -17,7 +17,6 @@ adb push "$SERVER_PATH" /userdata/rknn_server
 echo "2. 移动文件并修复权限..."
 adb shell "mount -o remount,rw / && \
            cp /userdata/librknnrt.so /usr/lib/ && \
-           cp /userdata/librknnrt.so /usr/lib64/ && \
            cp /userdata/rknn_server /usr/bin/ && \
            chmod +x /usr/bin/rknn_server && \
            rm /userdata/librknnrt.so /userdata/rknn_server"
