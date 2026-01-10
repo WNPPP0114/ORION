@@ -112,7 +112,7 @@ graph TD
 
 ### 前置条件
 *   **硬件平台**: Rockchip RK3588/RK3588S (运行 LLM 需 8GB+ 内存)
-*   **开发主机**: Ubuntu 22.04 LTS (需要 Docker 环境)
+*   **开发主机**: Ubuntu 20.04 LTS (需要 Docker 环境)
 *   **SDK 版本**: Rockchip Linux SDK 5.10 + RKNN Toolkit2 v2.0+
 
 ### 1. 系统环境搭建 (Docker)
