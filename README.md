@@ -9,7 +9,7 @@
 
 ## 📖 Introduction
 
-**ORION** (Project Code Name) is a high-performance, heterogeneous edge AI framework engineered specifically for the Rockchip RK3588 platform. It transcends traditional "vision-only" edge systems by fusing **Real-time Object Detection (YOLO)** with **Semantic Reasoning (DeepSeek LLM)** into a unified, zero-copy pipeline.
+**RK-Linux-Hetero-Fusion** is a high-performance, heterogeneous edge AI framework engineered specifically for the Rockchip RK3588 platform. It transcends traditional "vision-only" edge systems by fusing **Real-time Object Detection (YOLO)** with **Semantic Reasoning (DeepSeek LLM)** into a unified, zero-copy pipeline.
 
 Current edge AI solutions often suffer from memory bottlenecks and serialized processing. ORION solves this by implementing a **DMA-BUF (DRM) Zero-Copy architecture**, allowing the CPU, NPU, RGA, and GPU to share memory without redundant copying. The result is a system capable of **60+ FPS visual perception**, **14 tokens/s complex logic reasoning**, and **4K UI rendering** simultaneously, enabling true "Embedded AGI" capabilities on <12W power consumption.
 
