@@ -133,7 +133,7 @@ docker run -v $(pwd):/workspace -it orion-builder
 # 构建定制版 U-Boot, Kernel 和 RootFS
 cd bsp
 ./configure --platform=rk3588 --board=itop-3588
-./build.sh full_image
+./build.sh all
 ```
 
 ### 3. 编译核心程序
