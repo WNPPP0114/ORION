@@ -11,7 +11,7 @@
 
 **RK-Linux-Hetero-Fusion** 是一个专为 Rockchip RK3588 平台打造的高性能边缘 AI 异构计算框架。它突破了传统嵌入式系统“仅视觉（Vision-only）”的局限，通过零拷贝流水线将 **实时目标检测 (YOLO)** 与 **语义推理 (DeepSeek LLM)** 深度融合。
 
-针对边缘端常见的内存瓶颈与处理串行化痛点，ORION 实现了基于 **DMA-BUF (DRM)** 的全链路零拷贝架构，实现了 CPU、NPU、RGA 和 GPU 之间的显存直通。该方案在 <12W 功耗下，同时实现了 **60+ FPS 视觉感知**、**14 tokens/s 复杂逻辑推理**以及 **4K UI 流畅渲染**，让嵌入式设备具备了初步的 AGI 能力。
+针对边缘端常见的内存瓶颈与处理串行化痛点，RK-Linux-Hetero-Fusion 实现了基于 **DMA-BUF (DRM)** 的全链路零拷贝架构，实现了 CPU、NPU、RGA 和 GPU 之间的显存直通。该方案在 <12W 功耗下，同时实现了 **60+ FPS 视觉感知**、**14 tokens/s 复杂逻辑推理**以及 **4K UI 流畅渲染**，让嵌入式设备具备了初步的 AGI 能力。
 
 > **核心设计理念：**
 > *   **极致成本：** 在边缘端 (RK3588) 运行大模型，替代昂贵的云端 GPU 方案。
@@ -48,7 +48,7 @@
 
 ```mermaid
 graph TD
-    subgraph "ORION 双路智能架构"
+    subgraph "双路智能架构"
         direction TB
         
         Cam[相机视频流] -->|"Raw Video Frames"| V1
@@ -124,8 +124,8 @@ git clone --recursive https://github.com/WNPPP0114/RK-Linux-Hetero-Fusion.git
 cd RK-Linux-Hetero-Fusion
 
 # 初始化编译环境
-docker build -t orion-builder -f docker/Dockerfile .
-docker run -v $(pwd):/workspace -it orion-builder
+docker build -t fusion-builder -f docker/Dockerfile .
+docker run -v $(pwd):/workspace -it fusion-builder
 ```
 
 ### 2. 构建 BSP 与固件
@@ -149,21 +149,21 @@ make -j$(nproc)
 ### 4. 部署与运行
 ```bash
 # 传输文件至开发板
-scp ./orion_core user@rk3588:/usr/local/bin/
-scp -r ../models user@rk3588:/opt/orion/
+scp ./fusion_core user@rk3588:/usr/local/bin/
+scp -r ../models user@rk3588:/opt/fusion/
 
-# 在设备上运行 ORION 守护进程
+# 在设备上运行 Hetero-Fusion 守护进程
 export DISPLAY=:0
-sudo orion_core \
-  --vision_model /opt/orion/models/yolov11s.rknn \
-  --llm_model /opt/orion/models/deepseek-r1-1.5b_w4a16.rknn \
+sudo fusion_core \
+  --vision_model /opt/fusion/models/yolov11s.rknn \
+  --llm_model /opt/fusion/models/deepseek-r1-1.5b_w4a16.rknn \
   --enable_gl_render true
 ```
 
 ## 📂 项目结构
 
 ```text
-ORION/
+fusion/
 ├── 📂 bsp/                      # 板级支持包 (BSP) 配置与脚本
 │   ├── kernel_config            # Linux 5.10 定制 defconfig
 │   └── dts/                     # 设备树插件 (Overlay)
