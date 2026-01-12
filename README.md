@@ -97,7 +97,7 @@ graph TD
     style Cam fill:#F5F5F5,stroke:#595959,stroke-width:2px,color:#262626
 ```
 
-## 📊 Performance Benchmarks
+## 📊 Performance Benchmarks(2K 27-inch screen, HDMI)
 
 | Component | Configuration | Throughput | Resource Usage | Efficiency Gain |
 | :--- | :--- | :--- | :--- | :--- |
